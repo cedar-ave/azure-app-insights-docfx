@@ -1,0 +1,18 @@
+[
+    {
+        "blobDirName": "product-guide-1",
+        "blobDirPath": "product-guide-1"
+    },
+    {
+        "blobDirName": "product-guide-1a",
+        "blobDirPath": "product-guide-1/product-guide-1a"
+    },
+    {
+        "blobDirName": "product-guide-2",
+        "blobDirPath": "product-guide-2"
+    },
+    {
+        "blobDirName": "product-guide-2a",
+        "blobDirPath": "product-guide-2/product-guide-2a"
+    }
+]

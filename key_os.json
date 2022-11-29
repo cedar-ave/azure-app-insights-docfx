@@ -1,0 +1,22 @@
+[
+    {
+        "osKey": "Windows",
+        "osGeneral": "Windows"
+    },
+    {
+        "osKey": "Mac OS",
+        "osGeneral": "Mac OS"
+    },
+    {
+        "osKey": "iOS",
+        "osGeneral": "iOS"
+    },
+    {
+        "osKey": "Linux",
+        "osGeneral": "Linux"
+    },
+    {
+        "osKey": "Android",
+        "osGeneral": "Android"
+    }
+]

@@ -1,0 +1,30 @@
+[
+    {
+        "browserKey": "Chrome",
+        "browserGeneral": "Chrome"
+    },
+    {
+        "browserKey": "Edg",
+        "browserGeneral": "Edge"
+    },
+    {
+        "browserKey": "Safari",
+        "browserGeneral": "Safari"
+    },
+    {
+        "browserKey": "Firefox",
+        "browserGeneral": "Firefox"
+    },
+    {
+        "browserKey": "Internet Explorer",
+        "browserGeneral": "Internet Explorer"
+    },
+    {
+        "browserKey": "Chrome Mobile",
+        "browserGeneral": "Chrome Mobile"
+    },
+    {
+        "browserKey": "Mobile Safari",
+        "browserGeneral": "Safari Mobile"
+    }
+]

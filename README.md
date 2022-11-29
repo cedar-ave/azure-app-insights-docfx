@@ -19,6 +19,7 @@ This project standardizes and adds value to usage data about site content and us
 - Contents of each directory published to a corresponding directory (subsite) in an Azure Blob, e.g.:
   - Azure Storage Account > Container > Blob > **product-guide-1/**\*\*
   - Azure Storage Account > Container > Blob > **product-guide-2/**\*\*
+  - Subdirectories are also supported (e.g., **product-guide-1/product-guide-1-subsite**\*\*)
 - Live site URLs match the directory (subsite) structure of the DocFx output in the Azure Blob, e.g.:
   - **product-guide-1/** in the Azure Blob is **\<site root\>/product-guide-1/**\*\*
     - Example: **docs.\<your site\>.com/product-guide-1/articles/page-1.html**

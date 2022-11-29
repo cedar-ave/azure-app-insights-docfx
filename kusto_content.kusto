@@ -1,0 +1,4 @@
+pageViews 
+| where timestamp >ago(90d)
+| summarize Ocurrences=count() by tostring(url), name 
+| sort by Ocurrences desc

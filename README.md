@@ -1,10 +1,15 @@
 # Optimize usage analytics reports of a DocFx website tracked with Azure Application Insights
 
+This project standardizes and adds value to usage data about site content and users. Final output is a CSV optimized for use in data visualization software.
+
 - [Prerequisites](#prerequisites)
 - [Overview](#overview)
   - [Script 1: Content analytics](#script-1-content-analytics)
+    - [Purpose 1: Identify site pages with zero views](#purpose-1-identify-site-pages-with-zero-views)
+    - [Purpose 2: Add metadata to content (guide names, tags, type of documentation, landing pages, etc.)](#purpose-2-add-metadata-to-site-pages)
   - [Script 2: User analytics](#script-2-user-analytics)
 - [Steps](#steps)
+- [Notes](#notes)
 
 ## Prerequisites
 
@@ -115,9 +120,9 @@ becomes
 |---------------------|-------|
 | `About Product 1`   | 390   |
 
-###### Home pages
+###### Subsite landing pages
 
-It also consolidates views of a home page. Some have a blank URL, others have a title of **index.html**, etc.
+**script_content.sh** consolidates views of a subsite's landing page. Some have a blank URL, others have a title of **index.html**, etc.
 
 ###### Irrelevant domains
 
@@ -220,7 +225,7 @@ Reporting visualization software may have trouble recognizing the duration of a 
 - `>=5min` becomes `300000`
 - Etc.
 
-#### Standizes browsers
+#### Standardizes browsers
 
 Similar to [**key.json**](purpose-2-add-metadata-to-site-pages), a **key_browser.json** file standardizes browser names based on specified strings, e.g.:
 
@@ -310,3 +315,4 @@ Results:
 
 ## Notes
 - By default, Azure Application Insights stores only 90 days of data.
+- Why the scripts transform the data from to CSV to JSON: The Azure Application Insights export is CSV. **index.json** in the Azure Blob is JSON. Combining the two data sources as JSON enables cleaner processing and sums values of consolidated pages.

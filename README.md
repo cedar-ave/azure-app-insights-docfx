@@ -1,6 +1,6 @@
 # Optimize usage analytics reports of a DocFx website tracked with Azure Application Insights
 
-This project standardizes and adds value to usage data about site content and users. Final output is a CSV optimized for use in data visualization software.
+This project standardizes and adds value to usage data about site content and users. Final output is are CSVs optimized for use in data visualization software.
 
 - [Prerequisites](#prerequisites)
   - [Directory and site structure](#directory-and-site-structure)

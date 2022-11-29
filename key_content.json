@@ -14,7 +14,7 @@
   {
     "url": "/api/",
     "guide": "api",
-    "restApiSubGuide": identity,
+    "restApiSubGuide": "identity",
     "tag": "restApireference"
   }
 ]

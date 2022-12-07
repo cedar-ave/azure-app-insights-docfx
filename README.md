@@ -29,9 +29,9 @@ This project standardizes and adds value to usage data about site content and us
       - [Example output](#example-output)
   - [Purpose 3: Gather data by individual page view](#purpose-3-gather-data-by-individual-page-view)
     - [Combine duplicates](#combine-duplicates)
-    - [Standardize performance buckets](#standardize-performance-buckets)
     - [Standardize browsers](#standardize-browsers)
     - [Standardize operating systems](#standardize-operating-systems)
+    - [Standardize performance buckets](#standardize-performance-buckets)
 - [Steps](#steps)
   - [Step 1: Export data from Azure Application Insights](#step-1-export-data-from-azure-application-insights)
   - [Step 2: Process the data](#step-2-process-the-data)
@@ -159,7 +159,24 @@ www.<your site>.com/product-guide-2/product-guide-2a/index.html
 
 ### Purpose 1: Identify site pages with zero views
 
-Azure Application Insights provides data only site pages with >=1 view. It can be helpful to know which pages have zero views.
+Azure Application Insights provides data only site pages with >=1 view, e.g.:
+
+```csv
+url,name,Ocurrences
+"https://<your site>.com/product-guide-1/index.html","Welcome",1600
+"http://localhost:3000/product-guide-1/index.html","Welcome",1550
+"https://<your site>.com/product-guide-1/page-1.html","Settings",1425
+"https://<your site>.com/product-guide-1/page-2.html","Configuration | Articles",1420
+"https://<your site>.com/product-guide-2/page-1.html","Glossary",1415
+"https://<your site>.com/product-guide-2/page-1.html","Glossary - docs.<your site>.com",1413
+"http://localhost:7000/product-guide-2/page-1.html","Glossary",1412
+"https://<your site>.com/product-guide-2/page-2.html?q=admin%20console","Administration",1400
+"https://<your site>.com/product-guide-1/page-1.html#options","Settings",1390
+"https://<your site>.com/product-guide-2/product-guide-2a/page-1.html","Intro",1375
+"https://<your site>.com/product-guide-2/page-3.html","Security, permissions, and identification",1350
+```
+
+It can be helpful to know which pages have zero views.
 
 The solution is to compare a (1) list of all pages that exist with a (2) list of pages tracked by Azure Application Insights. Any page not in both lists is assumed to have zero views.
 
@@ -171,7 +188,7 @@ When a DocFx site is generated locally (e.g., `<local machine>/product-guide-1/_
 
 #### (2) List of pages tracked by Azure Application Insights
 
-A Kusto query (`kusto_queries/kusto_content.kusto`) returns a list of pages with >=1 view. It also returns each page's view count, name, and URL. See step 2 below.
+A Kusto query (`kusto_queries/content.kusto`) returns a list of pages with >=1 view. It also returns each page's view count, name, and URL. See step 2 below.
 
 #### How the lists are compared
 
@@ -355,18 +372,14 @@ If the path in the `hrefFull` key in `content.json` (object 1) includes the stri
 
 ### Purpose 3: Gather data by individual page view
 
-In Azure Application Insights, a Kusto query (`kusto_queries/kusto_users.kusto`) returns the following data on each page view:
+In Azure Application Insights, a Kusto query (`kusto_queries/users.kusto`) returns the following data on each page view, e.g.:
 
-- Timestamp
-- Page view
-- User ID
-- Duration
-- Location
-- Browser
-- Operating system
-- Session ID
-- Operation ID
-- Performance bucket
+```csv
+"timestamp [UTC]",name,url,"user_Id",duration,"client_City","client_StateOrProvince","client_CountryOrRegion","client_Browser","client_OS","session_Id",itemType,"operation_Id",performanceBucket,"count_sum"
+"10/30/2022, 7:54:05.267 PM","Page 1","https://docs.<your site>.com/product-guide-1/articles/page-1.html",abcd,511,Auburn,Washington,"United States","Chrome 106.0","Mac OS X 10.15","abc1234",pageView,abc1234,"500ms-1sec",1
+"10/29/2022, 10:50:00.100 AM","Page 1","https://docs.<your site>.com/product-guide-1/articles/page-1.html",abcd,520,Cleveland,Ohio,"United States","Chrome 105.0","Windows 10","abc1234",pageView,abc1234,"500ms-1sec",1
+"10/29/2022, 10:48:00.001 AM","Ping","https://docs.<your site>.com/api/identity/ping.html",abcd,520,Tokyo,,Japan,"Firefox 106.0","Android","abc1234",pageView,abc1234,"3sec-7sec",1
+```
 
 #### Combine duplicates
 
@@ -375,17 +388,6 @@ In Azure Application Insights, a Kusto query (`kusto_queries/kusto_users.kusto`)
 - [Duplicate pages due to search results and anchors](#search-results-and-anchors)
 - [Same page, different names](#same-page-different-names)
 - [Irrelevant domains](#irrelevant-domains)
-
-#### Standardize performance buckets
-
-Reporting visualization software may have trouble recognizing the duration of a page's performance due to how the duration is reported in the Azure Application Insights export. 
-
-`usage.sh` replaces the values with a consistent value in milliseconds, e.g.:
-
-- `<250ms` becomes `100`
-- `500ms-1sec` becomes `750`
-- `>=5min` becomes `300000`
-- Etc.
 
 #### Standardize browsers
 
@@ -439,21 +441,32 @@ A `osKey.json` file reduces the longer version name to a brand name based on a s
 
 If the operating system reported by Azure Application Insights is `Windows 10`, `usage.sh` identifies from `osKey.json` that `Windows 10` includes the string `Windows` (as named in `osKey`) and adds an `osGeneral` category.  
 
+#### Standardize performance buckets
+
+Reporting visualization software may have trouble recognizing the duration of a page's performance due to how the duration is reported in the Azure Application Insights export.
+
+`usage.sh` replaces the values with a consistent value in milliseconds, e.g.:
+
+- `<250ms` becomes `100`
+- `500ms-1sec` becomes `750`
+- `>=5min` becomes `300000`
+- Etc.
+
 ## Steps
 
 ### Step 1: Export data from Azure Application Insights
 
 1. Go to Azure Application Insights > `Logs`.
-2. Copy and paste the contents of `kusto_queries/kusto_content.kusto` into the query field.
+2. Copy and paste the contents of `kusto_queries/content.kusto` into the query field.
 3. Click `Run`.
 4. Export all rows as a CSV file to a local `azure_exports` directory.
 5. Rename the exported file according to the table below.
-6. Repeat steps for `kusto_queries/kusto_users.kusto`.
+6. Repeat steps for `kusto_queries/users.kusto`.
 
-| Kusto query                       | Rename the export to |
-|-----------------------------------|----------------------|
-| kusto_queries/kusto_content.kusto | content.csv          |
-| kusto_queries/kusto_users.kusto   | users.csv            |
+| Kusto query                 | Rename the export to |
+|-----------------------------|----------------------|
+| kusto_queries/content.kusto | content.csv          |
+| kusto_queries/users.kusto   | users.csv            |
 
 ### Step 2: Process the data
 

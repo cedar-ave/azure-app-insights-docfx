@@ -1,5 +1,5 @@
-troubleshoot/
+azure_exports/
 localIndexes/
-*.csv
-*.json
-!key*.json
+process/
+content.json
+users.json

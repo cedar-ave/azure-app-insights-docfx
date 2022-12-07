@@ -2,13 +2,11 @@
   {
     "url": "/product-guide-1/",
     "guide": "product-guide-1",
-    "restApiSubGuide": null,
     "tag": "how-to"
   },
   {
     "url": "/product-guide-2/home.html",
     "guide": "product-guide-2",
-    "restApiSubGuide": null,
     "tag": "home-page"
   },
   {

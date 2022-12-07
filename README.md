@@ -452,6 +452,25 @@ Reporting visualization software may have trouble recognizing the duration of a 
 - `>=5min` becomes `300000`
 - Etc.
 
+`performanceKey.json`:
+
+```json
+[
+    {
+        "performanceBucketKey": "1sec-3sec",
+        "performanceBucketMilliseconds": "2000"
+    },
+    {
+        "performanceBucketKey": "250ms-500ms",
+        "performanceBucketMilliseconds": "350"
+    },
+    {
+        "performanceBucketKey": "500ms-1sec",
+        "performanceBucketMilliseconds": "750"
+    }
+]
+```
+
 ## Steps
 
 ### Step 1: Export data from Azure Application Insights

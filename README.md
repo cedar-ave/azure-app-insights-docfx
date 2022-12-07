@@ -528,3 +528,4 @@ siteUrl="" #Example: docs.<my site>.com
 
 - By default, Azure Application Insights stores only 90 days of data.
 - Why the scripts transform the data from CSV to JSON: The Azure Application Insights export is CSV. `index.json` in the Azure Blob is JSON. Combining the two data sources as JSON enables cleaner processing and sums values of consolidated pages.
+- The process could be streamlined by creating a [continuous export of Azure Application Insights data](https://learn.microsoft.com/en-us/azure/azure-monitor/app/export-telemetry#setup), storing it in a blob, and executing this Bash script inside an Azure DevOps pipeline YAML file.

@@ -107,22 +107,6 @@ jq --arg siteUrl $siteUrl '
 | (.name) |= ascii_downcase]
 ' > temp.tmp && mv temp.tmp process/$type.json #remove search result and anchor strings from `.hrefFull`  #remove `localhost`, etc.  #create a simple path to join on (`articles/guide/page.html`)  #if `.hrefSimple` is blank, replace with `index.html` to indicate it is a landing page  #add key for subsite only  #remove unnecessary appendages to article name (e.g. ` | Articles`)  #remove exclamation marks from page name  #lowercase page name  #remove commas from page name
 
-if [[ $type = "users" ]]
-then
-cat process/$type.json | \
-jq -S '
-[.[]
-| with_entries(if .key == "timestamp [UTC]" then .key = "timestamp" else . end)
-| with_entries(if .key == "client_Browser" then .key = "browser" else . end)
-| with_entries(if .key == "client_City" then .key = "city" else . end)
-| with_entries(if .key == "client_CountryOrRegion" then .key = "countryOrRegion" else . end)
-| with_entries(if .key == "client_OS" then .key = "os" else . end)
-| with_entries(if .key == "client_StateOrProvince" then .key = "stateOrProvince" else . end)
-| with_entries(if .key == "count_sum" then .key = "views" else . end)
-| del(.browserKey,.osKey,.performanceBucketKey,.itemType)]
-' > temp.tmp && mv temp.tmp process/$type.json #simplify & standardize keys
-fi
-
 if [[ $type = "content" ]]
 then
 

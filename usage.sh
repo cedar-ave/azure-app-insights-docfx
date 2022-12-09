@@ -79,33 +79,45 @@ fi
 jq --arg key $key --arg sourceKey $sourceKey '
 sort_by('".$key"' | -length) as $c | inputs | map(. + ('".$sourceKey"' as $s | first($c[]
 | select('".$key"' as $ss | $s | index($ss))) // {}))
-' keys/$key.json process/$type.json > temp.tmp && mv temp.tmp process/$type.json #add generic browser and OS keys (e.g., `Chrome` vs. `Chrome 106.0`)  #standardize performance buckets into milliseconds (e.g., `5000` vs. `3sec-7sec`)
+' keys/$key.json process/$type.json > temp.tmp && mv temp.tmp process/$type.json #add generic browser and OS keys (e.g., `Chrome` vs. `Chrome 106.0`) | standardize performance buckets into milliseconds (e.g., `5000` vs. `3sec-7sec`)
 
 done
 
 fi
 
+articles="articles"
+restapi="restapi"
+api="api"
+
 cat process/$type.json | \
-jq --arg siteUrl $siteUrl '
+jq --arg siteUrl $siteUrl --arg articles $articles --arg restapi $restapi --arg api $api '
 [.[]
 | with_entries(if .key == "url" then .key = "hrefFull" else . end)
+| walk(if type == "object" and (.hrefFull | contains("\($siteUrl)") | not) then empty else . end)
 | .hrefFull |= split("?q=")[0]
 | .hrefFull |= split("#")[0]
-| walk(if type == "object" and(.hrefFull | contains("\($siteUrl)") | not) then empty else . end)
+| .hrefFull |= (gsub("\\?$"; ""))
 | .hrefFull |= (gsub("\/$"; ""))
 | (.hrefSimple = .hrefFull)
-| .hrefSimple |= (gsub("https://\($siteUrl)/.*?/"; ""))
-| walk(if type == "object" and (.hrefSimple | endswith(".html") | not) then .hrefSimple = "index.html" else . end)
+| walk(if type == "object" and (.hrefSimple | contains("\/articles\/")) then (.hrefSimple |= "\($articles)" + split("\($articles)")[1]) else . end)
+| walk(if type == "object" and (.hrefSimple | contains("\/restapi\/")) then (.hrefSimple |= "\($restapi)" + split("\($restapi)")[1]) else . end)
+| walk(if type == "object" and (.hrefSimple | contains("\/api\/")) then (.hrefSimple |= "\($api)" + split("\($api)")[1]) else . end)
+| walk(if type == "object" and (.hrefSimple | contains("index.html")) then (.hrefSimple = "index.html") else . end)
+| walk(if type == "object" and (.hrefSimple | contains(".html") | not) then (.hrefSimple = "index.html") else . end)
 | (.hrefSubsite = .hrefFull)
-| .hrefSubsite |= (gsub("https://\($siteUrl)/"; ""))
-| .hrefSubsite |= (gsub("/.*$"; ""))
+| .hrefSubsite |= split("https://\($siteUrl)/")[1]
+| .hrefSubsite |= split("\($articles)")[0]
+| .hrefSubsite |= split("\($restapi)")[0]
+| .hrefSubsite |= split("\($api)")[0]
+| .hrefSubsite |= (gsub("\/$"; ""))
+| .hrefSubsite |= (gsub("/index.html"; ""))
 | .name |= (gsub(" \\| Articles"; ""))
 | .name |= (gsub(" - https://\($siteUrl)/"; ""))
 | .name |= (gsub(" - \($siteUrl)/"; ""))
 | .name |= (gsub("!"; ""))
 | (.name) |= (split(",")|join(""))
 | (.name) |= ascii_downcase]
-' > temp.tmp && mv temp.tmp process/$type.json #remove search result and anchor strings from `.hrefFull`  #remove `localhost`, etc.  #create a simple path to join on (`articles/guide/page.html`)  #if `.hrefSimple` is blank, replace with `index.html` to indicate it is a landing page  #add key for subsite only  #remove unnecessary appendages to article name (e.g. ` | Articles`)  #remove exclamation marks from page name  #lowercase page name  #remove commas from page name
+' > temp.tmp && mv temp.tmp process/$type.json #remove search result and anchor strings from `.hrefFull` | remove `localhost`, etc. | create a simple path to join on (`articles/guide/page.html`) | if `.hrefSimple` is blank, replace with `index.html` to indicate it is a landing page | add key for subsite only | remove unnecessary appendages to article name (e.g. ` | Articles`) | remove exclamation marks from page name | lowercase page name | remove commas from page name
 
 if [[ $type = "content" ]]
 then
@@ -118,7 +130,7 @@ jq '
 | group_by(.hrefSubsite)[]
 | {hrefFull: .[0].hrefFull, hrefSimple: .[0].hrefSimple, name: .[0].name, views: (map(.Ocurrences | tonumber) | add), hrefSubsite: .[0].hrefSubsite}]
 | sort_by(-.views)
-' > temp.tmp && mv temp.tmp process/$type.json #combine duplicates  #sum values
+' > temp.tmp && mv temp.tmp process/$type.json #combine duplicates | sum values
 
 jq '
 sort_by(.path | -length) as $c | inputs | map(. + (.hrefSimple as $s | first($c[] | select(.path as $ss | $s | index($ss))) // {}))

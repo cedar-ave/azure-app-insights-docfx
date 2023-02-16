@@ -1,4 +1,4 @@
-pageViews 
-| where timestamp >ago(90d)
-| summarize Ocurrences=count() by tostring(url), name 
-| sort by Ocurrences desc
+AppPageViews 
+| where TimeGenerated >ago(90d)
+| summarize Id=count() by tostring(Url), Name
+| sort by Id desc

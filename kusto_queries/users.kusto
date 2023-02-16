@@ -1,5 +1,4 @@
-pageViews
-| where timestamp >ago(90d)
-| where client_Type == 'Browser'
-| summarize count_sum = sum(itemCount) by timestamp, name, url, user_Id, duration, client_City, client_StateOrProvince, client_CountryOrRegion, client_Browser, client_OS, session_Id, itemType, operation_Id, performanceBucket
-| sort by timestamp desc
+AppPageViews
+| where TimeGenerated >ago(90d)
+| summarize Views = sum(ItemCount) by TimeGenerated, Name, Url, UserId, DurationMs, ClientCity, ClientStateOrProvince, ClientCountryOrRegion, ClientBrowser, ClientOS, SessionId, Type, OperationId, Id, OperationName
+| sort by TimeGenerated desc

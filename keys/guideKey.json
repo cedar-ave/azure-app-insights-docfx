@@ -1,0 +1,10 @@
+[
+  {
+    "existingPath": "old-guide-name-in-path-1",
+    "joinPath": "new-guide-name-in-path-1"
+  },
+  {
+    "existingPath": "old-guide-name-in-path-2",
+    "joinPath": "new-guide-name-in-path-2"
+  },
+]

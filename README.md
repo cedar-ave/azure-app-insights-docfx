@@ -441,33 +441,22 @@ A `osKey.json` file reduces the longer version name to a brand name based on a s
 
 If the operating system reported by Azure Application Insights is `Windows 10`, `usage.sh` identifies from `osKey.json` that `Windows 10` includes the string `Windows` (as named in `osKey`) and adds an `osGeneral` category.  
 
-#### Standardize performance buckets
+#### Provide way to join data if guide name in path changes
 
-Reporting visualization software may have trouble recognizing the duration of a page's performance due to how the duration is reported in the Azure Application Insights export.
+If a guide name changes by way of the directory path, this step adds a value to join on later in analytics software. For example, if Product ABC is renamed to Product DEF, the directory name may change accordingly from `/ABC` to `/DEF`. That means the URL for a page in the first directory changes from `https://docs.<your site>.com/product-abc/about.html` to `https://docs.<your site>.com/product-def/about.html`. Join on `joinPath` in both `content.json` or `users.json` to see views or other data combined from both pages.
 
-`usage.sh` replaces the values with a consistent value in milliseconds, e.g.:
-
-- `<250ms` becomes `100`
-- `500ms-1sec` becomes `750`
-- `>=5min` becomes `300000`
-- Etc.
-
-`performanceKey.json`:
+`guideKey.json`:
 
 ```json
 [
-    {
-        "performanceBucketKey": "1sec-3sec",
-        "performanceBucketMilliseconds": "2000"
-    },
-    {
-        "performanceBucketKey": "250ms-500ms",
-        "performanceBucketMilliseconds": "350"
-    },
-    {
-        "performanceBucketKey": "500ms-1sec",
-        "performanceBucketMilliseconds": "750"
-    }
+  {
+    "existingPath": "old-guide-name-in-path-1",
+    "joinPath": "new-guide-name-in-path-1"
+  },
+  {
+    "existingPath": "old-guide-name-in-path-2",
+    "joinPath": "new-guide-name-in-path-2"
+  },
 ]
 ```
 

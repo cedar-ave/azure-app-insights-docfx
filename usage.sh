@@ -92,28 +92,22 @@ if [[ $type = "users" ]]
 then
 
 for key in browserKey \
-osKey \
-performanceBucketKey ; do
+osKey ; do
 
 if [[ $key = browserKey ]]
 then
-sourceKey="client_Browser"
+sourceKey="clientBrowser"
 fi
 
 if [[ $key = osKey ]]
 then
-sourceKey="client_OS"
-fi
-
-if [[ $key = performanceBucketKey ]]
-then
-sourceKey="performanceBucket"
+sourceKey="clientOS"
 fi
 
 jq --arg key $key --arg sourceKey $sourceKey '
 sort_by('".$key"' | -length) as $c | inputs | map(. + ('".$sourceKey"' as $s | first($c[]
 | select('".$key"' as $ss | $s | index($ss))) // {}))
-' keys/$key.json $processingDir/$type.json > temp.tmp && mv temp.tmp $processingDir/$type.json #add generic browser and OS keys (e.g., `Chrome` vs. `Chrome 106.0`) | standardize performance buckets into milliseconds (e.g., `5000` vs. `3sec-7sec`)
+' keys/$key.json $processingDir/$type.json > temp.tmp && mv temp.tmp $processingDir/$type.json #add generic browser and OS keys (e.g., `Chrome` vs. `Chrome 106.0`)
 
 done
 
@@ -169,9 +163,10 @@ if [[ $type = "content" ]]
 then
 cat $processingDir/$type.json | \
 jq '
-[group_by(.hrefSimple)[]
+[group_by(.hrefFull)[]
+| group_by(.hrefSimple)[]
 | group_by(.hrefSubsite)[]
-| {hrefFull: .[0].hrefFull, hrefSimple: .[0].hrefSimple, Name: .[0].Name, views: (map(.Id | tonumber) | add), hrefSubsite: .[0].hrefSubsite}]
+| {hrefFull: .[0].hrefFull, hrefSimple: .[0].hrefSimple, Name: .[0].Name, views: (map(.Id | tonumber) | add), hrefSubsite: .[0].hrefSubsite, joinPath: .[0].joinPath}]
 | sort_by(-.views)
 ' > temp.tmp && mv temp.tmp $processingDir/$type.json #combine duplicates | sum values
 

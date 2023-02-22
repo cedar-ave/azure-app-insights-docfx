@@ -31,7 +31,7 @@ This project standardizes and adds value to usage data about site content and us
     - [Combine duplicates](#combine-duplicates)
     - [Standardize browsers](#standardize-browsers)
     - [Standardize operating systems](#standardize-operating-systems)
-    - [Standardize performance buckets](#standardize-performance-buckets)
+    - [Provide a way to join data if guide name in path changes](#provide-a-way-to-join-data-if-guide-name-in-path-changes)
 - [Steps](#steps)
   - [Step 1: Export data from Azure Application Insights](#step-1-export-data-from-azure-application-insights)
   - [Step 2: Process the data](#step-2-process-the-data)
@@ -441,7 +441,7 @@ A `osKey.json` file reduces the longer version name to a brand name based on a s
 
 If the operating system reported by Azure Application Insights is `Windows 10`, `usage.sh` identifies from `osKey.json` that `Windows 10` includes the string `Windows` (as named in `osKey`) and adds an `osGeneral` category.  
 
-#### Provide way to join data if guide name in path changes
+#### Provide a way to join data if guide name in path changes
 
 If a guide name changes by way of the directory path, this step adds a value to join on later in analytics software. For example, if Product ABC is renamed to Product DEF, the directory name may change accordingly from `/ABC` to `/DEF`. That means the URL for a page in the first directory changes from `https://docs.<your site>.com/product-abc/about.html` to `https://docs.<your site>.com/product-def/about.html`. Join on `joinPath` in both `content.json` or `users.json` to see views or other data combined from both pages.
 
@@ -481,28 +481,13 @@ If a guide name changes by way of the directory path, this step adds a value to 
 1. In `usage.sh`, define the empty variables, e.g.:
 
 ```
+siteUrl="" #Example: docs.<my site>.com
 storageAccountName="" #Azure Storage account name
 accountKey="" #Azure Storage account key
 containerName="" #Azure Storage container name
-siteUrl="" #Example: docs.<my site>.com
 ```
 
-2. In `dirsKey.json`, add directory names and paths in the Azure Blob, e.g.:
-
-```
-[
-  {
-    "blobDirName": "product-guide-1",
-    "blobDirPath": "product-guide-1"
-  },
-  {
-    "blobDirName": "product-guide-1a",
-    "blobDirPath": "product-guide-1/product-guide-1a"
-  }
-]
-```
-
-3. Execute the script locally:
+2. Execute the script locally:
 
 ```
 ./usage.sh
@@ -513,8 +498,6 @@ siteUrl="" #Example: docs.<my site>.com
 - `content.json`
 - `users.json`
 
-## Notes
+## Note
 
-- By default, Azure Application Insights stores only 90 days of data.
-- Why the scripts transform the data from CSV to JSON: The Azure Application Insights export is CSV. `index.json` in the Azure Blob is JSON. Combining the two data sources as JSON enables cleaner processing and sums values of consolidated pages.
-- The process could be streamlined by creating a [continuous export of Azure Application Insights data](https://learn.microsoft.com/en-us/azure/azure-monitor/app/export-telemetry#setup), storing it in a blob, and executing this Bash script inside an Azure DevOps pipeline YAML file.
+The process could be streamlined by creating a [continuous export of Azure Application Insights data](https://learn.microsoft.com/en-us/azure/azure-monitor/app/export-telemetry#setup), storing it in a blob, and executing this Bash script inside an Azure DevOps pipeline YAML file.
